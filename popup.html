@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LGTM Generator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>LGTM Generator</h1>
+
+    <div class="category-section">
+      <label for="category">Category:</label>
+      <select id="category">
+        <option value="food">Food (食べ物)</option>
+        <option value="nature">Nature (自然)</option>
+        <option value="animal">Animal (動物)</option>
+        <option value="space">Space (宇宙)</option>
+        <option value="abstract">Abstract (抽象)</option>
+        <option value="minimal">Minimal (ミニマル)</option>
+        <option value="retro">Retro (レトロ)</option>
+        <option value="cute">Cute (可愛い)</option>
+        <option value="cool">Cool (かっこいい)</option>
+      </select>
+    </div>
+
+    <div class="style-section">
+      <label for="style">Style:</label>
+      <select id="style">
+        <option value="photo">Photo-realistic</option>
+        <option value="illustration">Illustration</option>
+        <option value="watercolor">Watercolor</option>
+        <option value="sketch">Sketch</option>
+        <option value="pixel">Pixel Art</option>
+      </select>
+    </div>
+
+    <button id="generateBtn" class="generate-btn">Generate LGTM</button>
+
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Generating...</p>
+    </div>
+
+    <div id="result" class="result hidden">
+      <img id="generatedImage" alt="Generated LGTM">
+      <div class="markdown-section">
+        <label>Markdown:</label>
+        <input type="text" id="markdownOutput" readonly>
+        <button id="copyBtn" class="copy-btn">Copy</button>
+      </div>
+    </div>
+
+    <div id="error" class="error hidden"></div>
+
+    <div class="footer">
+      <a href="options.html" target="_blank">Settings</a>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
