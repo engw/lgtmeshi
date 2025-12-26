@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const loading = document.getElementById('loading');
   const result = document.getElementById('result');
   const generatedImage = document.getElementById('generatedImage');
-  const markdownOutput = document.getElementById('markdownOutput');
   const copyBtn = document.getElementById('copyBtn');
+  const copyImageBtn = document.getElementById('copyImageBtn');
   const errorDiv = document.getElementById('error');
 
   // Category prompts that avoid AI-looking results
@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   generateBtn.addEventListener('click', generateImage);
   copyBtn.addEventListener('click', copyMarkdown);
+  copyImageBtn.addEventListener('click', copyImage);
 
   async function generateImage() {
     // Get settings
@@ -71,14 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const imageUrl = `data:image/png;base64,${imageData}`;
       generatedImage.src = imageUrl;
 
-      // For markdown, we'll use a placeholder URL since we can't host the image
-      // In a real app, you'd upload to an image hosting service
-      const timestamp = Date.now();
-      const markdownUrl = `![LGTM](data:image/png;base64,${imageData.substring(0, 50)}...)`;
-
       // Store the full base64 for copying
       generatedImage.dataset.fullBase64 = imageData;
-      markdownOutput.value = `![LGTM](lgtm-${timestamp}.png)`;
 
       result.classList.remove('hidden');
     } catch (error) {
@@ -169,6 +164,32 @@ document.addEventListener('DOMContentLoaded', () => {
     throw new Error('Ollama image generation not supported with this model. Please use Gemini or an image-capable model.');
   }
 
+  async function copyImage() {
+    const base64 = generatedImage.dataset.fullBase64;
+    if (!base64) return;
+
+    try {
+      // Convert base64 to blob
+      const response = await fetch(`data:image/png;base64,${base64}`);
+      const blob = await response.blob();
+
+      // Copy image to clipboard
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob })
+      ]);
+
+      copyImageBtn.textContent = 'Copied!';
+      copyImageBtn.classList.add('copied');
+
+      setTimeout(() => {
+        copyImageBtn.textContent = 'Copy Image';
+        copyImageBtn.classList.remove('copied');
+      }, 2000);
+    } catch (err) {
+      showError('Failed to copy image to clipboard');
+    }
+  }
+
   async function copyMarkdown() {
     const base64 = generatedImage.dataset.fullBase64;
     if (!base64) return;
@@ -182,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
       copyBtn.classList.add('copied');
 
       setTimeout(() => {
-        copyBtn.textContent = 'Copy';
+        copyBtn.textContent = 'Copy Markdown';
         copyBtn.classList.remove('copied');
       }, 2000);
     } catch (err) {
