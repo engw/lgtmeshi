@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
       provider: 'gemini',
       geminiApiKey: '',
       ollamaUrl: 'http://localhost:11434',
-      ollamaModel: 'llava'
+      ollamaModel: 'llava',
+      imgurClientId: ''
     });
 
     if (settings.provider === 'gemini' && !settings.geminiApiKey) {
@@ -71,14 +72,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const imageUrl = `data:image/png;base64,${imageData}`;
       generatedImage.src = imageUrl;
 
-      // For markdown, we'll use a placeholder URL since we can't host the image
-      // In a real app, you'd upload to an image hosting service
-      const timestamp = Date.now();
-      const markdownUrl = `![LGTM](data:image/png;base64,${imageData.substring(0, 50)}...)`;
+      // Upload to Imgur if Client ID is configured
+      let imgurUrl = null;
+      if (settings.imgurClientId) {
+        try {
+          imgurUrl = await uploadToImgur(settings.imgurClientId, imageData);
+        } catch (uploadError) {
+          console.warn('Imgur upload failed:', uploadError.message);
+        }
+      }
 
-      // Store the full base64 for copying
+      // Store URL for copying
+      generatedImage.dataset.imgurUrl = imgurUrl || '';
       generatedImage.dataset.fullBase64 = imageData;
-      markdownOutput.value = `![LGTM](lgtm-${timestamp}.png)`;
+
+      // Set markdown output
+      if (imgurUrl) {
+        markdownOutput.value = `![LGTM](${imgurUrl})`;
+      } else {
+        markdownOutput.value = '![LGTM](Imgur未設定 - Settingsで設定してください)';
+      }
 
       result.classList.remove('hidden');
     } catch (error) {
@@ -169,12 +182,41 @@ document.addEventListener('DOMContentLoaded', () => {
     throw new Error('Ollama image generation not supported with this model. Please use Gemini or an image-capable model.');
   }
 
-  async function copyMarkdown() {
-    const base64 = generatedImage.dataset.fullBase64;
-    if (!base64) return;
+  async function uploadToImgur(clientId, base64Data) {
+    const response = await fetch('https://api.imgur.com/3/image', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Client-ID ${clientId}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        image: base64Data,
+        type: 'base64'
+      })
+    });
 
-    // Copy the full markdown with base64 image
-    const markdown = `![LGTM](data:image/png;base64,${base64})`;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.data?.error || 'Failed to upload to Imgur');
+    }
+
+    const data = await response.json();
+    return data.data.link;
+  }
+
+  async function copyMarkdown() {
+    const imgurUrl = generatedImage.dataset.imgurUrl;
+    const base64 = generatedImage.dataset.fullBase64;
+
+    if (!imgurUrl && !base64) return;
+
+    // Use Imgur URL if available, otherwise fall back to base64
+    let markdown;
+    if (imgurUrl) {
+      markdown = `![LGTM](${imgurUrl})`;
+    } else {
+      markdown = `![LGTM](data:image/png;base64,${base64})`;
+    }
 
     try {
       await navigator.clipboard.writeText(markdown);

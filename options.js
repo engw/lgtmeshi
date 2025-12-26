@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const geminiApiKey = document.getElementById('geminiApiKey');
   const ollamaUrl = document.getElementById('ollamaUrl');
   const ollamaModel = document.getElementById('ollamaModel');
+  const imgurClientId = document.getElementById('imgurClientId');
   const testBtn = document.getElementById('testBtn');
   const status = document.getElementById('status');
 
@@ -33,7 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
       provider: 'gemini',
       geminiApiKey: '',
       ollamaUrl: 'http://localhost:11434',
-      ollamaModel: 'llava'
+      ollamaModel: 'llava',
+      imgurClientId: ''
     });
 
     // Set provider
@@ -47,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     geminiApiKey.value = settings.geminiApiKey;
     ollamaUrl.value = settings.ollamaUrl;
     ollamaModel.value = settings.ollamaModel;
+    imgurClientId.value = settings.imgurClientId;
   }
 
   function updateProviderUI(provider) {
@@ -66,7 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
       provider,
       geminiApiKey: geminiApiKey.value,
       ollamaUrl: ollamaUrl.value,
-      ollamaModel: ollamaModel.value
+      ollamaModel: ollamaModel.value,
+      imgurClientId: imgurClientId.value
     });
 
     showStatus('Settings saved successfully!', 'success');
