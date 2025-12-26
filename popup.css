@@ -122,44 +122,43 @@ select:focus {
   background: #f5f5f5;
 }
 
-.markdown-section {
+.copy-buttons {
   display: flex;
   gap: 8px;
-  align-items: flex-end;
 }
 
-.markdown-section label {
-  flex-shrink: 0;
-  align-self: center;
-}
-
-.markdown-section input {
+.copy-image-btn,
+.copy-md-btn {
   flex: 1;
-  padding: 8px 10px;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 12px;
-  font-family: 'Monaco', 'Menlo', monospace;
-}
-
-.copy-btn {
-  padding: 8px 16px;
-  background: #28a745;
+  padding: 10px 16px;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 
-.copy-btn:hover {
-  background: #218838;
+.copy-image-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.copy-btn.copied {
+.copy-image-btn:hover {
+  transform: translateY(-1px);
+}
+
+.copy-md-btn {
   background: #6c757d;
+}
+
+.copy-md-btn:hover {
+  background: #5a6268;
+}
+
+.copy-image-btn.copied,
+.copy-md-btn.copied {
+  background: #28a745;
 }
 
 .error {
