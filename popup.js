@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const loading = document.getElementById('loading');
   const result = document.getElementById('result');
   const generatedImage = document.getElementById('generatedImage');
-  const copyBtn = document.getElementById('copyBtn');
   const copyImageBtn = document.getElementById('copyImageBtn');
   const errorDiv = document.getElementById('error');
 
@@ -31,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   generateBtn.addEventListener('click', generateImage);
-  copyBtn.addEventListener('click', copyMarkdown);
   copyImageBtn.addEventListener('click', copyImage);
 
   async function generateImage() {
@@ -187,27 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 2000);
     } catch (err) {
       showError('Failed to copy image to clipboard');
-    }
-  }
-
-  async function copyMarkdown() {
-    const base64 = generatedImage.dataset.fullBase64;
-    if (!base64) return;
-
-    // Copy the full markdown with base64 image
-    const markdown = `![LGTM](data:image/png;base64,${base64})`;
-
-    try {
-      await navigator.clipboard.writeText(markdown);
-      copyBtn.textContent = 'Copied!';
-      copyBtn.classList.add('copied');
-
-      setTimeout(() => {
-        copyBtn.textContent = 'Copy Markdown';
-        copyBtn.classList.remove('copied');
-      }, 2000);
-    } catch (err) {
-      showError('Failed to copy to clipboard');
     }
   }
 
